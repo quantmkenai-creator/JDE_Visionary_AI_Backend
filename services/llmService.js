@@ -20,15 +20,15 @@ function detectLimit(q) {
   return m ? parseInt(m[1]) : 100;
 }
 
-// 🔹 CHAT DETECTION
-function isChat(q) {
-  return (
-    q.includes("hello") ||
-    q.includes("who are you") ||
-    q.includes("what is ai") ||
-    q.includes("joke") ||
-    q.includes("random")
-  );
+// 🔹 CASUAL INPUT DETECTION (enhanced for greetings, smalltalk, random)
+function isCasualInput(q) {
+  const casualPatterns = [
+    /\b(hi|hello|hey|good morning|good afternoon|good evening|how are you|how's it going|what's up|bye|goodbye|thanks|thank you)\b/i,
+    /\b(weather|time|date|joke|lorem|test|random|foo|bar)\b/i,
+    /^[\s\W]{0,10}$/i,  // Very short or whitespace/nonsense
+    /^.{0,20}$/i        // Very short inputs (<20 chars)
+  ];
+  return casualPatterns.some(pattern => pattern.test(q));
 }
 
 // 🔹 AI (fallback)
@@ -56,12 +56,19 @@ async function detectIntentAI(q) {
 async function processQuestion(question) {
   const q = normalizeQuestion(question);
 
-  // CHAT
-  if (isChat(q)) {
+  if (q === "hi") {
     return {
-      intent: "chat",
+      intent: "casual",
+      response: "Hey!! I'm JDE Assistant"
+    };
+  }
+
+  // CASUAL INPUT
+  if (isCasualInput(q)) {
+    return {
+      intent: "casual",
       sql: null,
-      message: "I am your JDE AI assistant."
+      response: "Hi! I'm your JDE AI assistant. How can I help with JDE data today? Ask about purchase orders, sales orders, customers, items, or table codes like F4211 (e.g., 'show recent purchase orders' or 'f4211 top 5')."
     };
   }
 
@@ -86,7 +93,13 @@ async function processQuestion(question) {
     else if (q.includes("item")) intent = "item";
   }
 
-  if (!intent) throw new Error("Intent detection failed");
+  if (!intent) {
+    return {
+      intent: "unknown",
+      sql: null,
+      response: "Sorry, I didn't understand. Try 'purchase orders', 'sales', 'customers', 'items', or table codes (e.g., f4211)."
+    };
+  }
 
   const sql = buildQuery(intent, q);
 
