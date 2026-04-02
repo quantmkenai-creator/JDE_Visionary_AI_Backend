@@ -68,7 +68,7 @@ async function processQuestion(question) {
     return {
       intent: "casual",
       sql: null,
-      response: "Hi! I'm your JDE AI assistant. How can I help with JDE data today? Ask about purchase orders, sales orders, customers, items, or table codes like F4211 (e.g., 'show recent purchase orders' or 'f4211 top 5')."
+      response: "Hi! I'm your JDE AI assistant. How can I help with JDE data today?"
     };
   }
 
