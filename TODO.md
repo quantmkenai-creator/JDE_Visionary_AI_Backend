@@ -1,0 +1,1 @@
+- [x] 1. Enhance schemaMapper.js: Add detailed JDE schema context (tables/fields for F4211, F4311, F4101, F41021, F4201, etc.)
