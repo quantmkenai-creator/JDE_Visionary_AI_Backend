@@ -1,22 +1,29 @@
 {
-  "name": "jde_visionary_backend",
+  "name": "jde-chatbot",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "JDE ERP SQL Chatbot",
+  "main": "src/app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "echo \"No tests yet\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "axios": "^1.14.0",
-    "cohere-ai": "^7.21.0",
+    "body-parser": "^1.20.4",
+    "cohere-ai": "^8.0.0",
     "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "mssql": "^12.2.1"
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "mssql": "^12.2.1",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
+    "tedious": "^19.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
