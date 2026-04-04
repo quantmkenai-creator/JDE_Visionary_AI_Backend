@@ -160,11 +160,11 @@ Columns (JDE→friendly): ${allColumns}
 
 Examples logic:
 "Show top 5 F0101": SELECT TOP 5 ABAN8 AS customer_id, ABALPH AS customer_name FROM F0101 ORDER BY ABAN8
-"List sales orders qty price": SELECT TOP 10 sod.SDDOCO AS order_number, sod.SDLITM AS item_number, SUM(sod.SDUORG) AS quantity, AVG(sod.SDUPRC) AS unit_price FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO = sod.SDDOCO GROUP BY sod.SDDOCO, sod.SDLITM ORDER BY MAX(sod.SDDRQJ) DESC
+"List sales orders qty price": SELECT TOP 100 sod.SDDOCO AS order_number, sod.SDLITM AS item_number, SUM(sod.SDUORG) AS quantity, AVG(sod.SDUPRC) AS unit_price FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO = sod.SDDOCO GROUP BY sod.SDDOCO, sod.SDLITM ORDER BY MAX(sod.SDDRQJ) DESC
 "Total sales qty": SELECT SUM(SDUORG) AS total_quantity FROM F4211
 "Total sales per customer": SELECT sh.SHAN8 AS customer_id, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_qty FROM F4201 sh JOIN F4211 sod ON sh.SHDOCO=sod.SDDOCO JOIN F0101 c ON sh.SHAN8=c.ABAN8 GROUP BY sh.SHAN8, c.ABALPH
-"High priority sales": SELECT TOP 10 * FROM F4211 WHERE SDPRIO = 'HIGH' ORDER BY SDPDDJ
-"Open PO qty >5": SELECT TOP 10 PDDOCO AS po_number, PDUOPN AS open_qty FROM F4311 WHERE PDUOPN > 5 AND PDNXTR='210'
+"High priority sales": SELECT TOP 100 * FROM F4211 WHERE SDPRIO = 'HIGH' ORDER BY SDPDDJ
+"Open PO qty >5": SELECT TOP 100 PDDOCO AS po_number, PDUOPN AS open_qty FROM F4311 WHERE PDUOPN > 5 AND PDNXTR='210'
 "Critical sales orders": SELECT * FROM F4211 WHERE SDNXTR='210' AND SDPDDJ < GETDATE() ORDER BY SDPDDJ  -- delayed
 "In progress POs": SELECT ph.PHDOCO, pod.PDUOPN FROM F4301 ph JOIN F4311 pod ON ph.PHDOCO=pod.PDDOCO WHERE pod.PDNXTR='210'
 "Sales with customer": SELECT sh.SHDOCO, c.ABALPH AS customer FROM F4201 sh JOIN F0101 c ON sh.SHAN8=c.ABAN8
@@ -173,11 +173,11 @@ Examples logic:
 **🚨 ITEM COST/INVENTORY RULE: Item costs + inventory = F4101(i.IMITM)+F4102(cost.IBITM=i.IMITM, IBROPI unit_cost)+F41021(inv.LIITM=i.IMITM, LIPQOH qty_on_hand). For \"item costs from inventory\": JOIN all 3, SELECT item_number, desc, unit_cost, qty, ORDER BY qty DESC**
 
 **ITEM COST EXAMPLE (exact match):**
-"Item costs from inventory": SELECT TOP 20 i.IMLITM AS item_number, i.IMDSC1 AS description, cost.IBROPI AS unit_cost, inv.LIPQOH AS qty_on_hand FROM F4101 i JOIN F4102 cost ON i.IMITM = cost.IBITM JOIN F41021 inv ON i.IMITM = inv.LIITM ORDER BY inv.LIPQOH DESC
-"Recent sales": SELECT TOP 20 sod.SDDOCO AS order_number, CONVERT(VARCHAR(10), MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))), 120) AS requested_date, SUM(sod.SDUORG) AS total_qty FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO=sod.SDDOCO GROUP BY sod.SDDOCO ORDER BY MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))) DESC
+"Item costs from inventory": SELECT TOP 200 i.IMLITM AS item_number, i.IMDSC1 AS description, cost.IBROPI AS unit_cost, inv.LIPQOH AS qty_on_hand FROM F4101 i JOIN F4102 cost ON i.IMITM = cost.IBITM JOIN F41021 inv ON i.IMITM = inv.LIITM ORDER BY inv.LIPQOH DESC
+"Recent sales": SELECT TOP 100 sod.SDDOCO AS order_number, CONVERT(VARCHAR(10), MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))), 120) AS requested_date, SUM(sod.SDUORG) AS total_qty FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO=sod.SDDOCO GROUP BY sod.SDDOCO ORDER BY MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))) DESC
 
 **JULIAN DATE EXAMPLE:**
-"Recent sales dates": SELECT TOP 10 sh.SHDOCO AS order_number, CONVERT(VARCHAR(10), DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1)), 120) AS requested_date, SUM(sod.SDUORG) AS qty FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO=sod.SDDOCO GROUP BY sh.SHDOCO ORDER BY MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))) DESC
+"Recent sales dates": SELECT TOP 100 sh.SHDOCO AS order_number, CONVERT(VARCHAR(10), DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1)), 120) AS requested_date, SUM(sod.SDUORG) AS qty FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO=sod.SDDOCO GROUP BY sh.SHDOCO ORDER BY MAX(DATEADD(day,RIGHT(sod.SDDRQJ,3)-1,DATEFROMPARTS(LEFT(sod.SDDRQJ,2)+2000,1,1))) DESC
 
 "List top 10 sales orders with customer and quantity": SELECT TOP 10 sod.SDDOCO AS order_number, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_quantity FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO = sod.SDDOCO JOIN F0101 c ON sh.SHAN8 = c.ABAN8 WHERE sod.SDNXTR = '210' GROUP BY sod.SDDOCO, c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
 
@@ -188,12 +188,12 @@ Examples logic:
 2. PO QUERIES ONLY F4301(ph.PHDOCO,ph.PHAN8)+F4311(pod.PDDOCO=ph.PHDOCO,pod.PDNXTR='210',pod.PDUOPN open_qty)
 3. **NEVER** PHDOCO/PDDOCO/PDNXTR on SALES/F42xx. **NEVER** SHDOCO/SDDOCO/SDNXTR on PO/F43xx
 4. Status ALWAYS detail line: sod.SDNXTR='210' sales open, pod.PDNXTR='210' PO in-progress
-5. Open sales ALWAYS: TOP 10 sod.SDDOCO order#, c.ABALPH customer, SUM(sod.SDUORG) qty, WHERE sod.SDNXTR='210', GROUP sod.SDDOCO,c.ABALPH, ORDER MAX(sod.SDDRQJ) DESC
+5. Open sales ALWAYS: TOP 100 sod.SDDOCO order#, c.ABALPH customer, SUM(sod.SDUORG) qty, WHERE sod.SDNXTR='210', GROUP sod.SDDOCO,c.ABALPH, ORDER MAX(sod.SDDRQJ) DESC
 
 **STATUS 210 EXAMPLES (exact matches):**
-"Open sales orders status 210": SELECT TOP 10 sod.SDDOCO AS sales_order_number, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_quantity FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO = sod.SDDOCO JOIN F0101 c ON sh.SHAN8 = c.ABAN8 WHERE sod.SDNXTR = '210' GROUP BY sod.SDDOCO, c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
-"Open sales orders 210": SELECT TOP 10 sh.SHDOCO AS sales_order_number, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_quantity FROM F4201 sh JOIN F4211 sod ON sh.SHDOCO = sod.SDDOCO JOIN F0101 c ON sh.SHAN8 = c.ABAN8 WHERE sod.SDNXTR = '210' GROUP BY sh.SHDOCO, c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
-"Sales open status 210 qty customer": SELECT TOP 10 sod.SDDOCO AS order_number, c.ABALPH AS customer, SUM(sod.SDUORG) AS qty FROM F4211 sod JOIN F4201 sh ON sod.SDDOCO=sh.SHDOCO JOIN F0101 c ON sh.SHAN8=c.ABAN8 WHERE sod.SDNXTR='210' GROUP BY sod.SDDOCO,c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
+"Open sales orders status 210": SELECT TOP 100 sod.SDDOCO AS sales_order_number, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_quantity FROM F4211 sod JOIN F4201 sh ON sh.SHDOCO = sod.SDDOCO JOIN F0101 c ON sh.SHAN8 = c.ABAN8 WHERE sod.SDNXTR = '210' GROUP BY sod.SDDOCO, c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
+"Open sales orders 210": SELECT TOP 100 sh.SHDOCO AS sales_order_number, c.ABALPH AS customer_name, SUM(sod.SDUORG) AS total_quantity FROM F4201 sh JOIN F4211 sod ON sh.SHDOCO = sod.SDDOCO JOIN F0101 c ON sh.SHAN8 = c.ABAN8 WHERE sod.SDNXTR = '210' GROUP BY sh.SHDOCO, c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
+"Sales open status 210 qty customer": SELECT TOP 100 sod.SDDOCO AS order_number, c.ABALPH AS customer, SUM(sod.SDUORG) AS qty FROM F4211 sod JOIN F4201 sh ON sod.SDDOCO=sh.SHDOCO JOIN F0101 c ON sh.SHAN8=c.ABAN8 WHERE sod.SDNXTR='210' GROUP BY sod.SDDOCO,c.ABALPH ORDER BY MAX(sod.SDDRQJ) DESC
 
 User: ${question}`;
 
