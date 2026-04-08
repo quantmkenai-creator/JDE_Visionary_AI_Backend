@@ -198,7 +198,7 @@ Examples logic:
 User: ${question}`;
 
   const response = await cohere.chat({
-    model: "c4ai-aya-expanse-8b",
+    model: "c4ai-aya-expanse-32b",
     message: prompt,
   });
 
