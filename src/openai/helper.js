@@ -142,8 +142,8 @@ async function generateSQL(question) {
 
 const prompt = `You are a JDE ERP SQL Chatbot. Generate SQL for questions like: "Show top 5 records from F0101", "List all sales orders", "Total sales quantity per customer", "Show high priority sales orders", "Purchase orders with open qty >5", etc.
 
-ALWAYS:
 - **🚨 JULIAN DATES: Convert JDE dates (SDDRQJ,SDPDDJ,PHTRDJ,PDDRQJ,ILTRDJ,PRRCDJ = YYDDD): CONVERT(VARCHAR(10), DATEADD(day, RIGHT(col,3)-1, DATEFROMPARTS(LEFT(col,2)+2000,1,1)), 120) AS date_name (24150→2024-05-30)**
+
 - Use SELECT col AS friendly_name (e.g. ABAN8 AS customer_id, SDUORG AS quantity, SDUPRC AS unit_price)
 - Tables: F0101(c), F4201(sh), F4211(sod), F4301(ph), F4311(pod), F4101(i), F41021(inv)
 - Joins: F0101.c.ABAN8 = F4201.sh.SHAN8 AND F4201.sh.SHDOCO = F4211.sod.SDDOCO (sales qty/customer); F4301.ph.PHDOCO = F4311.pod.PDDOCO (POs)
